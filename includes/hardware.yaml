@@ -1,0 +1,100 @@
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+display:
+  - platform: mipi_spi
+    spi_id: tft
+    model: ESP32-2432S028
+    auto_clear_enabled: false
+    update_interval: never
+    rotation: 180
+
+spi:
+  - id: tft
+    clk_pin: GPIO14
+    mosi_pin: GPIO13
+    miso_pin: GPIO12
+  - id: touch
+    clk_pin: GPIO25
+    mosi_pin: GPIO32
+    miso_pin: GPIO39
+
+touchscreen:
+  platform: xpt2046
+  spi_id: touch
+  cs_pin: GPIO33
+  calibration:
+    x_min: 235
+    x_max: 3850
+    y_min: 190
+    y_max: 3700
+  transform:
+    mirror_x: true
+  on_touch:
+    - if:
+        condition: 
+          or:
+            - lvgl.page.is_showing: page_screensaver
+            - lvgl.is_idle: 
+                timeout: $idle_timeout
+            - lvgl.is_paused
+            - light.is_off: light_backlight
+        then:
+          - logger.log: "Resuming from Idle"
+          - light.turn_on: light_backlight
+          - lvgl.resume
+          - lvgl.page.show: page_main
+          - lvgl.widget.redraw
+
+output:
+  - platform: ledc
+    pin: GPIO21
+    id: light_backlight_output
+
+light:
+  - platform: monochromatic
+    id: light_backlight
+    name: Display Backlight
+    output: light_backlight_output
+    restore_mode: ALWAYS_ON
+
+number:
+  - platform: template
+    id: number_display_burnin_color
+    min_value: 0x000000
+    max_value: 0xffffff
+    step: 1
+    lambda: |-
+      static uint16_t t = 0;
+      const uint8_t STEP = 32;
+      uint16_t nt = t + STEP;
+      if (nt >= 1536) nt -= 1536;
+      t = nt;
+
+      uint8_t seg = t >> 8;
+      uint8_t p = t & 0xFF;
+
+      uint8_t r=0, g=0, b=0;
+      switch (seg) {
+        case 0: r = 255;     g = p;        b = 0;       break;
+        case 1: r = 255 - p; g = 255;      b = 0;       break;
+        case 2: r = 0;       g = 255;      b = p;       break;
+        case 3: r = 0;       g = 255 - p;  b = 255;     break;
+        case 4: r = p;       g = 0;        b = 255;     break;
+        default: r = 255;     g = 0;        b = 255 - p; break;
+      }
+
+      return (uint32_t(r) << 16) | (uint32_t(g) << 8) | uint32_t(b);
+    set_action:
+      - lambda: return;
+    update_interval: 0.1s
+    on_value:
+      then:
+        - if:
+            condition: 
+              lvgl.page.is_showing: page_screensaver
+            then:
+              - lvgl.update:
+                  disp_bg_color: !lambda return lv_color_hex((int)id(number_display_burnin_color).state);

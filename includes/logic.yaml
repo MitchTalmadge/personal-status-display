@@ -1,0 +1,149 @@
+text_sensor:
+  - platform: homeassistant
+    id: mitch_status
+    entity_id: input_select.mitch_status
+    on_value:
+      then:
+        - script.execute: update_display
+  - platform: homeassistant
+    id: mitch_location
+    entity_id: person.mitch_talmadge
+    on_value:
+      then:
+        - script.execute: update_display
+
+script:
+  - id: update_display
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return std::string(id(mitch_location).state) == "home";
+          then:
+            - if:
+                condition:
+                  lambda: |-
+                    return std::string(id(mitch_status).state) == "Other";
+                then:
+                  - lvgl.label.update:
+                      id: status_text
+                      text: "Home"
+                  - lvgl.label.update:
+                      id: status_icon
+                      text: "${icon_home}"
+                      text_font: font_icons_150
+                  - lvgl.label.update:
+                      id: status_text
+                      text_color: ${color_home}
+                  - lvgl.label.update:
+                      id: status_icon
+                      text_color: ${color_home}
+            - if:
+                condition:
+                  lambda: |-
+                    return std::string(id(mitch_status).state) == "Sleeping";
+                then:
+                  - lvgl.label.update:
+                      id: status_text
+                      text: "Sleeping"
+                  - lvgl.label.update:
+                      id: status_icon
+                      text: "${icon_sleeping}"
+                      text_font: font_icons_150
+                  - lvgl.label.update:
+                      id: status_text
+                      text_color: ${color_sleeping}
+                  - lvgl.label.update:
+                      id: status_icon
+                      text_color: ${color_sleeping}
+            - if:
+                condition:
+                  lambda: |-
+                    return std::string(id(mitch_status).state) == "Working";
+                then:
+                  - lvgl.label.update:
+                      id: status_text
+                      text: "Working"
+                  - lvgl.label.update:
+                      id: status_icon
+                      text: "${icon_working}"
+                      text_font: font_icons_150
+                  - lvgl.label.update:
+                      id: status_text
+                      text_color: ${color_working}
+                  - lvgl.label.update:
+                      id: status_icon
+                      text_color: ${color_working}
+            - if:
+                condition:
+                  lambda: |-
+                    return std::string(id(mitch_status).state) == "Gaming";
+                then:
+                  - lvgl.label.update:
+                      id: status_text
+                      text: "Gaming"
+                  - lvgl.label.update:
+                      id: status_icon
+                      text: "${icon_gaming}"
+                      text_font: font_icons_150
+                  - lvgl.label.update:
+                      id: status_text
+                      text_color: ${color_gaming}
+                  - lvgl.label.update:
+                      id: status_icon
+                      text_color: ${color_gaming}
+            - if:
+                condition:
+                  lambda: |-
+                    return std::string(id(mitch_status).state) == "Meeting";
+                then:
+                  - lvgl.label.update:
+                      id: status_text
+                      text: "Meeting"
+                  - lvgl.label.update:
+                      id: status_icon
+                      text: "${icon_meeting}"
+                      text_font: font_icons_150
+                  - lvgl.label.update:
+                      id: status_text
+                      text_color: ${color_meeting}
+                  - lvgl.label.update:
+                      id: status_icon
+                      text_color: ${color_meeting}
+            - if:
+                condition:
+                  lambda: |-
+                    return std::string(id(mitch_status).state) == "Busy";
+                then:
+                  - lvgl.label.update:
+                      id: status_text
+                      text: "Busy"
+                  - lvgl.label.update:
+                      id: status_icon
+                      text: "${icon_busy}"
+                      text_font: font_icons_150
+                  - lvgl.label.update:
+                      id: status_text
+                      text_color: ${color_busy}
+                  - lvgl.label.update:
+                      id: status_icon
+                      text_color: ${color_busy}
+      - if:
+          condition:
+            lambda: |-
+              return std::string(id(mitch_location).state) == "away" || std::string(id(mitch_location).state) == "valley";
+          then:
+            - lvgl.label.update:
+                id: status_text
+                text: "Away"
+            - lvgl.label.update:
+                id: status_icon
+                text: "${icon_away}"
+                text_font: font_icons_150
+            - lvgl.label.update:
+                id: status_text
+                text_color: ${color_away}
+            - lvgl.label.update:
+                id: status_icon
+                text_color: ${color_away}
+      - lvgl.widget.redraw

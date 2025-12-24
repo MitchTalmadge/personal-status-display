@@ -1,0 +1,36 @@
+{
+  "name": "ESPHome",
+  "image": "ghcr.io/esphome/esphome:latest",
+  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esphome.esphome-vscode",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "files.associations": {
+          "*.yaml": "yaml"
+        },
+        "yaml.schemas": {
+          "https://esphome.io/schema.json": "*.yaml"
+        }
+      }
+    }
+  },
+
+  "forwardPorts": [6052],
+  "portsAttributes": {
+    "6052": {
+      "label": "ESPHome Dashboard",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "workspaceMount": "source=${localWorkspaceFolder},target=/config,type=bind",
+  "workspaceFolder": "/config",
+
+  "postCreateCommand": "pip install --upgrade esphome",
+
+  "remoteUser": "root"
+}

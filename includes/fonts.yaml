@@ -1,0 +1,17 @@
+font:
+  - file: 'gfonts://Itim'
+    id: font_itim_50
+    size: 50
+    glyphs: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz'
+  - file: "gfonts://Material+Symbols+Outlined"
+    id: font_icons_150
+    size: 150
+    glyphs: [
+      "${icon_sleeping}",
+      "${icon_working}",
+      "${icon_gaming}",
+      "${icon_busy}",
+      "${icon_meeting}",
+      "${icon_home}",
+      "${icon_away}"
+    ]

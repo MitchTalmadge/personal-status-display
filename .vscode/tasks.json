@@ -1,0 +1,39 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "ESPHome: Dashboard",
+      "type": "shell",
+      "command": "esphome dashboard /config",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "ESPHome: Compile",
+      "type": "shell",
+      "command": "esphome compile ${relativeFile}",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ESPHome: Upload (OTA)",
+      "type": "shell",
+      "command": "esphome upload ${relativeFile}",
+      "problemMatcher": []
+    },
+    {
+      "label": "ESPHome: Validate Config",
+      "type": "shell",
+      "command": "esphome config ${relativeFile}",
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

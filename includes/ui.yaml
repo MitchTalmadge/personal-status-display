@@ -1,0 +1,48 @@
+lvgl:
+  disp_bg_color: yellow
+  log_level: VERBOSE
+  on_idle:
+    - timeout: $idle_timeout
+      then:
+        - light.turn_off: light_backlight
+    - timeout: $idle_burnin_start
+      then:
+        - lvgl.page.show: page_screensaver
+    - timeout: $idle_burnin_stop
+      then:
+        - lvgl.pause
+  pages:
+    - id: page_main
+      layout:
+        type: flex
+        flex_flow: column
+        flex_align_main: center
+        flex_align_cross: center
+        pad_row: 0
+      bg_color: black
+      widgets:
+        - label:
+            id: status_text
+            text: Sleeping
+            width: $display_w
+            styles: style_status_label
+            text_align: center
+            text_color: purple
+            text_font: font_itim_50
+        - label:
+            id: status_icon
+            text: "${icon_sleeping}"
+            width: $display_w
+            styles: style_status_icon
+            text_align: center
+            text_color: purple
+            text_font: font_icons_150
+    - id: page_screensaver
+      bg_opa: transp
+  resume_on_input: false
+  style_definitions:
+    - id: style_status_label
+      pad_top: -5
+      pad_bottom: 5
+    - id: style_status_icon
+      pad_all: -10
