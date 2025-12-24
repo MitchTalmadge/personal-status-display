@@ -17,6 +17,7 @@ This repo contains a single ESPHome firmware configuration for a Cheap Yellow Di
 - **Validate config:** `ESPHome: Validate Config` task (runs `esphome config main.yaml`).
 - **Compile:** `ESPHome: Compile` task for the fixed main.yaml.
 - **OTA upload:** `ESPHome: Upload (OTA)` task for the fixed main.yaml.
+- **OTA mDNS tip:** If `mitch-personal-status-display.local` doesn’t resolve, upload with the device IP (e.g., `esphome upload main.yaml --device 10.10.10.180`).
 - **Dashboard (optional):** `ESPHome: Dashboard` task starts `esphome dashboard /config` for local UI.
 - **CLI equivalents:** From the repo root:
   - `esphome config main.yaml`

@@ -1,5 +1,5 @@
 esphome:
-  name: "mitch_personal-status-display"
+  name: "mitch-personal-status-display"
   friendly_name: "Mitch's Personal Status Display"
   on_boot:
     priority: 600
