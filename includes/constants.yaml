@@ -2,8 +2,6 @@ substitutions:
   display_w: 240
   display_h: 320
   idle_timeout: 5s
-  idle_burnin_start: 10s
-  idle_burnin_stop: 40s
   
   # Colors (hex codes)
   color_home: "0xADD8E6"  # Light blue

@@ -9,31 +9,51 @@
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",
-        "panel": "new"
+        "panel": "new",
+        "showReuseMessage": false,
+        "clear": true
       }
     },
     {
       "label": "ESPHome: Compile",
       "type": "shell",
-      "command": "esphome compile ${relativeFile}",
+      "command": "esphome compile main.yaml",
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "problemMatcher": []
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      }
     },
     {
       "label": "ESPHome: Upload (OTA)",
       "type": "shell",
-      "command": "esphome upload ${relativeFile}",
-      "problemMatcher": []
+      "command": "esphome upload main.yaml",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      }
     },
     {
       "label": "ESPHome: Validate Config",
       "type": "shell",
-      "command": "esphome config ${relativeFile}",
+      "command": "esphome config main.yaml",
       "group": "test",
-      "problemMatcher": []
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      }
     }
   ]
 }

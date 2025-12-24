@@ -17,11 +17,13 @@ esphome:
             - lvgl.page.show: page_main
       - script.execute: update_display
 
-<<: !include includes/constants.yaml
-<<: !include includes/hardware.yaml
-<<: !include includes/fonts.yaml
-<<: !include includes/ui.yaml
-<<: !include includes/logic.yaml
+packages:
+  constants: !include includes/constants.yaml
+  hardware: !include includes/hardware.yaml
+  fonts: !include includes/fonts.yaml
+  logic: !include includes/logic.yaml
+  burnin: !include includes/burnin.yaml
+  ui: !include includes/ui.yaml
 
 api:
   encryption:

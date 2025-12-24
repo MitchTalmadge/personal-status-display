@@ -1,0 +1,42 @@
+substitutions:
+  idle_burnin_start: 10s
+  idle_burnin_stop: 40s
+
+number:
+  - platform: template
+    id: number_display_burnin_color
+    min_value: 0x000000
+    max_value: 0xffffff
+    step: 1
+    lambda: |-
+      static uint16_t t = 0;
+      const uint8_t STEP = 32;
+      uint16_t nt = t + STEP;
+      if (nt >= 1536) nt -= 1536;
+      t = nt;
+
+      uint8_t seg = t >> 8;
+      uint8_t p = t & 0xFF;
+
+      uint8_t r=0, g=0, b=0;
+      switch (seg) {
+        case 0: r = 255;     g = p;        b = 0;       break;
+        case 1: r = 255 - p; g = 255;      b = 0;       break;
+        case 2: r = 0;       g = 255;      b = p;       break;
+        case 3: r = 0;       g = 255 - p;  b = 255;     break;
+        case 4: r = p;       g = 0;        b = 255;     break;
+        default: r = 255;     g = 0;        b = 255 - p; break;
+      }
+
+      return (uint32_t(r) << 16) | (uint32_t(g) << 8) | uint32_t(b);
+    set_action:
+      - lambda: return;
+    update_interval: 0.1s
+    on_value:
+      then:
+        - if:
+            condition:
+              lvgl.page.is_showing: page_screensaver
+            then:
+              - lvgl.update:
+                  disp_bg_color: !lambda return lv_color_hex((int)id(number_display_burnin_color).state);
