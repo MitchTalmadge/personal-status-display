@@ -22,7 +22,7 @@ script:
       - lvgl.label.update:
           id: clock_text
           text: !lambda |-
-            static char buf[16];
+            static char buf[32];
             auto time = id(ha_time).now();
             int hour = time.hour;
             const char* am_pm = hour >= 12 ? "PM" : "AM";
