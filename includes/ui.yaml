@@ -21,6 +21,31 @@ lvgl:
         pad_row: 0
       bg_color: black
       widgets:
+        - obj:
+            id: clock_container
+            width: $display_w
+            height: 40
+            layout:
+              type: flex
+              flex_flow: row
+              flex_align_main: center
+              flex_align_cross: center
+            bg_opa: transp
+            border_width: 0
+            pad_all: 0
+            widgets:
+              - label:
+                  id: clock_icon
+                  text: "${icon_clock}"
+                  text_align: center
+                  text_color: white
+                  text_font: font_icons_24
+              - label:
+                  id: clock_text
+                  text: " 12:00 AM"
+                  text_align: center
+                  text_color: white
+                  text_font: font_itim_24
         - label:
             id: status_text
             text: Sleeping
