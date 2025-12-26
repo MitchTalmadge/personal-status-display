@@ -30,6 +30,9 @@ api:
     key: !secret api_encryption_key
 
 logger:
+  level: DEBUG
+  logs:
+    number: NONE
 
 wifi:
   ssid: !secret wifi_ssid

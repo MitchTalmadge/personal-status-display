@@ -6,7 +6,7 @@ substitutions:
   # Colors (hex codes)
   color_home: "0xADD8E6"  # Light blue
   color_sleeping: "0x800080"  # Purple
-  color_working: "0x808000"  # Olive
+  color_working: "0xFFFF00"  # Yellow
   color_gaming: "0x00FF00"  # Green
   color_meeting: "0xFF0000"  # Red
   color_busy: "0xFF0000"  # Red (same as meeting)

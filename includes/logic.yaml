@@ -145,11 +145,7 @@ script:
                   - lvgl.label.update:
                       id: status_icon
                       text_color: ${color_busy}
-      - if:
-          condition:
-            lambda: |-
-              return std::string(id(mitch_location).state) == "away" || std::string(id(mitch_location).state) == "valley";
-          then:
+          else:
             - lvgl.label.update:
                 id: status_text
                 text: "Away"
