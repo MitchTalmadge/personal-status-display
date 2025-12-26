@@ -40,19 +40,27 @@ script:
           text: !lambda |-
             static char buf[64];
             auto now = ::time(nullptr);
-            time_t elapsed = now - id(status_change_time);
             
+            // Get start time and drop seconds
+            struct tm *start_tm = localtime(&id(status_change_time));
+            start_tm->tm_sec = 0;
+            time_t start_time_no_seconds = mktime(start_tm);
+            
+            // Get current time and drop seconds
+            struct tm *now_tm = localtime(&now);
+            now_tm->tm_sec = 0;
+            time_t now_no_seconds = mktime(now_tm);
+            
+            // Calculate elapsed time in minutes (no seconds)
+            time_t elapsed = now_no_seconds - start_time_no_seconds;
             if (elapsed < 0) elapsed = 0;
             
-            // Round up to next minute if >= 30 seconds for display consistency
-            int total_minutes = (elapsed + 30) / 60;
+            int total_minutes = elapsed / 60;
             int hours = total_minutes / 60;
             int minutes = total_minutes % 60;
             
-            // Get the time when status changed (also round to minute)
-            time_t status_time_rounded = id(status_change_time) + 30;
-            struct tm *status_tm = localtime(&status_time_rounded);
-            int status_hour = status_tm->tm_hour;
+            // Get the start time for display (already has seconds dropped)
+            int status_hour = start_tm->tm_hour;
             const char* am_pm = status_hour >= 12 ? "PM" : "AM";
             if (status_hour > 12) status_hour -= 12;
             if (status_hour == 0) status_hour = 12;
@@ -60,10 +68,10 @@ script:
             // Format duration - hide hours if 0
             if (hours > 0) {
               snprintf(buf, sizeof(buf), "since %d:%02d %s (%dh:%02dm)", 
-                       status_hour, status_tm->tm_min, am_pm, hours, minutes);
+                       status_hour, start_tm->tm_min, am_pm, hours, minutes);
             } else {
               snprintf(buf, sizeof(buf), "since %d:%02d %s (%dm)", 
-                       status_hour, status_tm->tm_min, am_pm, minutes);
+                       status_hour, start_tm->tm_min, am_pm, minutes);
             }
             return buf;
   - id: update_display
@@ -226,6 +234,36 @@ script:
             - lvgl.label.update:
                 id: status_text
                 text_color: ${color_away}
+      # Show or hide duration label based on current status
+      - if:
+          condition:
+            lambda: |-
+              std::string statuses_str = "${statuses_with_duration}";
+              std::string current = id(current_display_status);
+              
+              // Check if current status is in the list
+              size_t pos = 0;
+              while (pos < statuses_str.length()) {
+                size_t comma = statuses_str.find(',', pos);
+                std::string status = statuses_str.substr(pos, comma - pos);
+                // Trim whitespace
+                status.erase(0, status.find_first_not_of(" \t"));
+                status.erase(status.find_last_not_of(" \t") + 1);
+                
+                if (status == current) {
+                  return true;
+                }
+                
+                if (comma == std::string::npos) break;
+                pos = comma + 1;
+              }
+              return false;
+          then:
+            - lvgl.widget.show:
+                id: status_duration
+          else:
+            - lvgl.widget.hide:
+                id: status_duration
             - lvgl.label.update:
                 id: status_icon
                 text_color: ${color_away}

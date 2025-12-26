@@ -68,7 +68,7 @@ lvgl:
                   styles: style_duration_label
                   text_align: center
                   text_color: white
-                  text_font: font_roboto_16
+                  text_font: font_itim_16
               - label:
                   id: status_icon
                   text: "${icon_sleeping}"

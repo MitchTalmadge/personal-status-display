@@ -12,6 +12,9 @@ substitutions:
   status_busy: "Busy"
   status_away: "Away"
   
+  # Statuses that should show duration (comma-separated)
+  statuses_with_duration: "Sleeping"
+  
   # Location names
   location_home: "home"
   
