@@ -13,6 +13,19 @@ text_sensor:
         - script.execute: update_display
 
 script:
+  - id: update_clock
+    then:
+      - lvgl.label.update:
+          id: clock_text
+          text: !lambda |-
+            static char buf[32];
+            auto time = id(ha_time).now();
+            int hour = time.hour;
+            const char* am_pm = hour >= 12 ? "PM" : "AM";
+            if (hour > 12) hour -= 12;
+            if (hour == 0) hour = 12;
+            snprintf(buf, sizeof(buf), " %d:%02d:%02d %s", hour, time.minute, time.second, am_pm);
+            return buf;
   - id: update_display
     then:
       - if:
@@ -143,3 +156,9 @@ script:
                 id: status_icon
                 text_color: ${color_away}
       - lvgl.widget.redraw
+      - script.execute: update_clock
+
+interval:
+  - interval: 1s
+    then:
+      - script.execute: update_clock

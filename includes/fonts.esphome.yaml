@@ -3,6 +3,10 @@ font:
     id: font_itim_50
     size: 50
     glyphs: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz'
+  - file: 'gfonts://Itim'
+    id: font_itim_24
+    size: 24
+    glyphs: '0123456789:APM '
   - file: "gfonts://Material+Symbols+Outlined"
     id: font_icons_150
     size: 150
@@ -14,4 +18,10 @@ font:
       "${icon_meeting}",
       "${icon_home}",
       "${icon_away}"
+    ]
+  - file: "gfonts://Material+Symbols+Outlined"
+    id: font_icons_24
+    size: 24
+    glyphs: [
+      "${icon_clock}"
     ]
