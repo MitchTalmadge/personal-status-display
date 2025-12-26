@@ -14,6 +14,7 @@ This repo contains a single ESPHome firmware configuration for a Cheap Yellow Di
 - **Idle/screen behavior:** `lvgl.on_idle` timers control backlight off, screensaver page, and LVGL pause; touchscreen `on_touch` resumes and returns to `page_main`.
 
 ## Developer Workflows
+- **Always compile after changes:** After modifying any config, run the compile step (`ESPHome: Compile` task or `esphome compile main.yaml`) to catch build issues before handing work back.
 - **Validate config:** `ESPHome: Validate Config` task (runs `esphome config main.yaml`).
 - **Compile:** `ESPHome: Compile` task for the fixed main.yaml.
 - **OTA upload:** `ESPHome: Upload (OTA)` task for the fixed main.yaml.
