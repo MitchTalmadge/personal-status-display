@@ -44,20 +44,27 @@ script:
             
             if (elapsed < 0) elapsed = 0;
             
-            // Calculate hours and minutes
-            int hours = elapsed / 3600;
-            int minutes = (elapsed % 3600) / 60;
+            // Round up to next minute if >= 30 seconds for display consistency
+            int total_minutes = (elapsed + 30) / 60;
+            int hours = total_minutes / 60;
+            int minutes = total_minutes % 60;
             
-            // Get the time when status changed
-            time_t status_time = id(status_change_time);
-            struct tm *status_tm = localtime(&status_time);
+            // Get the time when status changed (also round to minute)
+            time_t status_time_rounded = id(status_change_time) + 30;
+            struct tm *status_tm = localtime(&status_time_rounded);
             int status_hour = status_tm->tm_hour;
             const char* am_pm = status_hour >= 12 ? "PM" : "AM";
             if (status_hour > 12) status_hour -= 12;
             if (status_hour == 0) status_hour = 12;
             
-            snprintf(buf, sizeof(buf), "since %d:%02d %s (%dh:%02dm)", 
-                     status_hour, status_tm->tm_min, am_pm, hours, minutes);
+            // Format duration - hide hours if 0
+            if (hours > 0) {
+              snprintf(buf, sizeof(buf), "since %d:%02d %s (%dh:%02dm)", 
+                       status_hour, status_tm->tm_min, am_pm, hours, minutes);
+            } else {
+              snprintf(buf, sizeof(buf), "since %d:%02d %s (%dm)", 
+                       status_hour, status_tm->tm_min, am_pm, minutes);
+            }
             return buf;
   - id: update_display
     then:

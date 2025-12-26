@@ -10,7 +10,7 @@ font:
   - file: 'gfonts://Roboto'
     id: font_roboto_16
     size: 16
-    glyphs: '0123456789:APMhm() '
+    glyphs: '0123456789:APMhm()since '
   - file: 'gfonts://Roboto'
     id: font_roboto_12
     size: 12
