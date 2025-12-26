@@ -1,7 +1,3 @@
-time:
-  - platform: homeassistant
-    id: ha_time
-
 text_sensor:
   - platform: homeassistant
     id: mitch_status

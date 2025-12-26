@@ -18,12 +18,12 @@ esphome:
       - script.execute: update_display
 
 packages:
-  constants: !include includes/constants.yaml
-  hardware: !include includes/hardware.yaml
-  fonts: !include includes/fonts.yaml
-  logic: !include includes/logic.yaml
-  burnin: !include includes/burnin.yaml
-  ui: !include includes/ui.yaml
+  burnin: !include includes/burnin.esphome.yaml
+  constants: !include includes/constants.esphome.yaml
+  fonts: !include includes/fonts.esphome.yaml
+  hardware: !include includes/hardware.esphome.yaml
+  logic: !include includes/logic.esphome.yaml
+  ui: !include includes/ui.esphome.yaml
 
 api:
   encryption:
@@ -34,10 +34,15 @@ logger:
   logs:
     number: NONE
 
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+time:
+  - platform: homeassistant
+    id: ha_time
+
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
 
-ota:
-  - platform: esphome
-    password: !secret ota_password

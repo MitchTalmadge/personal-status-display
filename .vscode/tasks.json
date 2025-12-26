@@ -17,7 +17,7 @@
     {
       "label": "ESPHome: Compile",
       "type": "shell",
-      "command": "esphome compile main.yaml",
+      "command": "esphome compile main.esphome.yaml",
       "group": {
         "kind": "build",
         "isDefault": true
@@ -33,7 +33,7 @@
     {
       "label": "ESPHome: Upload (OTA)",
       "type": "shell",
-      "command": "esphome upload main.yaml",
+      "command": "esphome upload main.esphome.yaml",
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",
@@ -45,7 +45,7 @@
     {
       "label": "ESPHome: Validate Config",
       "type": "shell",
-      "command": "esphome config main.yaml",
+      "command": "esphome config main.esphome.yaml",
       "group": "test",
       "problemMatcher": [],
       "presentation": {
