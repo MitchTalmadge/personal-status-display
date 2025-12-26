@@ -24,7 +24,7 @@ script:
             const char* am_pm = hour >= 12 ? "PM" : "AM";
             if (hour > 12) hour -= 12;
             if (hour == 0) hour = 12;
-            snprintf(buf, sizeof(buf), " %d:%02d %s", hour, time.minute, am_pm);
+            snprintf(buf, sizeof(buf), " %d:%02d:%02d %s", hour, time.minute, time.second, am_pm);
             return buf;
   - id: update_display
     then:
@@ -159,6 +159,6 @@ script:
       - script.execute: update_clock
 
 interval:
-  - interval: 60s
+  - interval: 1s
     then:
       - script.execute: update_clock
