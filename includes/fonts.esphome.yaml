@@ -7,6 +7,14 @@ font:
     id: font_itim_24
     size: 24
     glyphs: '0123456789:APM '
+  - file: 'gfonts://Roboto'
+    id: font_roboto_16
+    size: 16
+    glyphs: '0123456789:APMhm() '
+  - file: 'gfonts://Roboto'
+    id: font_roboto_12
+    size: 12
+    glyphs: '0123456789:APM '
   - file: "gfonts://Material+Symbols+Outlined"
     id: font_icons_150
     size: 150

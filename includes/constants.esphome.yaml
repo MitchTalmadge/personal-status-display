@@ -3,6 +3,21 @@ substitutions:
   display_h: 320
   idle_timeout: 5s
   
+  # Status names
+  status_home: "Home"
+  status_sleeping: "Sleeping"
+  status_working: "Working"
+  status_gaming: "Gaming"
+  status_meeting: "Meeting"
+  status_busy: "Busy"
+  status_away: "Away"
+  
+  # Location names
+  location_home: "home"
+  
+  # HA entity names
+  ha_status_other: "Other"
+  
   # Colors (hex codes)
   color_home: "0xADD8E6"  # Light blue
   color_sleeping: "0x800080"  # Purple

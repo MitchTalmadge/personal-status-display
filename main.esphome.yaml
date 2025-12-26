@@ -5,6 +5,8 @@ esphome:
     priority: 600
     then:
       - delay: 1s
+      - lambda: |-
+          id(status_change_time) = ::time(nullptr);
       - if:
           condition:
             or:
