@@ -119,15 +119,11 @@ script:
             - lvgl.label.update:
                 id: status_text
                 text: "${status_home}"
+                text_color: ${color_home}
             - lvgl.label.update:
                 id: status_icon
                 text: "${icon_home}"
                 text_font: font_icons_150
-            - lvgl.label.update:
-                id: status_text
-                text_color: ${color_home}
-            - lvgl.label.update:
-                id: status_icon
                 text_color: ${color_home}
       - if:
           condition:
@@ -137,15 +133,11 @@ script:
             - lvgl.label.update:
                 id: status_text
                 text: "${status_sleeping}"
+                text_color: ${color_sleeping}
             - lvgl.label.update:
                 id: status_icon
                 text: "${icon_sleeping}"
                 text_font: font_icons_150
-            - lvgl.label.update:
-                id: status_text
-                text_color: ${color_sleeping}
-            - lvgl.label.update:
-                id: status_icon
                 text_color: ${color_sleeping}
       - if:
           condition:
@@ -155,15 +147,11 @@ script:
             - lvgl.label.update:
                 id: status_text
                 text: "${status_working}"
+                text_color: ${color_working}
             - lvgl.label.update:
                 id: status_icon
                 text: "${icon_working}"
                 text_font: font_icons_150
-            - lvgl.label.update:
-                id: status_text
-                text_color: ${color_working}
-            - lvgl.label.update:
-                id: status_icon
                 text_color: ${color_working}
       - if:
           condition:
@@ -173,15 +161,11 @@ script:
             - lvgl.label.update:
                 id: status_text
                 text: "${status_gaming}"
+                text_color: ${color_gaming}
             - lvgl.label.update:
                 id: status_icon
                 text: "${icon_gaming}"
                 text_font: font_icons_150
-            - lvgl.label.update:
-                id: status_text
-                text_color: ${color_gaming}
-            - lvgl.label.update:
-                id: status_icon
                 text_color: ${color_gaming}
       - if:
           condition:
@@ -191,15 +175,11 @@ script:
             - lvgl.label.update:
                 id: status_text
                 text: "${status_meeting}"
+                text_color: ${color_meeting}
             - lvgl.label.update:
                 id: status_icon
                 text: "${icon_meeting}"
                 text_font: font_icons_150
-            - lvgl.label.update:
-                id: status_text
-                text_color: ${color_meeting}
-            - lvgl.label.update:
-                id: status_icon
                 text_color: ${color_meeting}
       - if:
           condition:
@@ -209,15 +189,11 @@ script:
             - lvgl.label.update:
                 id: status_text
                 text: "${status_busy}"
+                text_color: ${color_busy}
             - lvgl.label.update:
                 id: status_icon
                 text: "${icon_busy}"
                 text_font: font_icons_150
-            - lvgl.label.update:
-                id: status_text
-                text_color: ${color_busy}
-            - lvgl.label.update:
-                id: status_icon
                 text_color: ${color_busy}
       - if:
           condition:
@@ -227,12 +203,11 @@ script:
             - lvgl.label.update:
                 id: status_text
                 text: "${status_away}"
+                text_color: ${color_away}
             - lvgl.label.update:
                 id: status_icon
                 text: "${icon_away}"
                 text_font: font_icons_150
-            - lvgl.label.update:
-                id: status_text
                 text_color: ${color_away}
       # Show or hide duration label based on current status
       - if:
@@ -264,9 +239,6 @@ script:
           else:
             - lvgl.widget.hide:
                 id: status_duration
-            - lvgl.label.update:
-                id: status_icon
-                text_color: ${color_away}
 
 interval:
   - interval: 1s
