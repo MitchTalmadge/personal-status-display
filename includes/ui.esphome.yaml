@@ -16,18 +16,37 @@ lvgl:
       layout:
         type: flex
         flex_flow: column
-        flex_align_main: center
+        flex_align_main: START
         flex_align_cross: center
         pad_row: 0
       bg_color: black
       widgets:
         - obj:
-            id: clock_container
+            id: header_container
             width: $display_w
-            height: 40
+            height: 24
             layout:
               type: flex
               flex_flow: row
+              flex_align_main: END
+              flex_align_cross: center
+            bg_color: "0x1a1a1a"
+            border_width: 0
+            radius: 0
+            pad_all: 5
+            widgets:
+              - label:
+                  id: clock_text
+                  text: " 12:00 AM"
+                  text_align: right
+                  text_color: white
+                  text_font: font_roboto_12
+        - obj:
+            width: $display_w
+            height: 296
+            layout:
+              type: flex
+              flex_flow: column
               flex_align_main: center
               flex_align_cross: center
             bg_opa: transp
@@ -35,39 +54,38 @@ lvgl:
             pad_all: 0
             widgets:
               - label:
-                  id: clock_icon
-                  text: "${icon_clock}"
+                  id: status_text
+                  text: Sleeping
+                  width: $display_w
+                  styles: style_status_label
                   text_align: center
-                  text_color: white
-                  text_font: font_icons_24
+                  text_color: purple
+                  text_font: font_itim_50
               - label:
-                  id: clock_text
-                  text: " 12:00:00 AM"
+                  id: status_duration
+                  text: "since 12:00 AM (0h:0m)"
+                  width: $display_w
+                  styles: style_duration_label
                   text_align: center
                   text_color: white
-                  text_font: font_itim_24
-        - label:
-            id: status_text
-            text: Sleeping
-            width: $display_w
-            styles: style_status_label
-            text_align: center
-            text_color: purple
-            text_font: font_itim_50
-        - label:
-            id: status_icon
-            text: "${icon_sleeping}"
-            width: $display_w
-            styles: style_status_icon
-            text_align: center
-            text_color: purple
-            text_font: font_icons_150
+                  text_font: font_itim_16
+              - label:
+                  id: status_icon
+                  text: "${icon_sleeping}"
+                  width: $display_w
+                  styles: style_status_icon
+                  text_align: center
+                  text_color: purple
+                  text_font: font_icons_150
     - id: page_screensaver
       bg_opa: transp
   resume_on_input: false
   style_definitions:
     - id: style_status_label
       pad_top: -5
-      pad_bottom: 5
+      pad_bottom: 0
+    - id: style_duration_label
+      pad_top: 0
+      pad_bottom: 10
     - id: style_status_icon
       pad_all: -10

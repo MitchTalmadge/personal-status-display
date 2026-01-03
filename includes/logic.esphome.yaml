@@ -1,3 +1,12 @@
+globals:
+  - id: status_change_time
+    type: time_t
+    initial_value: '0'
+  - id: current_display_status
+    type: std::string
+    restore_value: no
+    initial_value: '"${status_sleeping}"'
+
 text_sensor:
   - platform: homeassistant
     id: mitch_status
@@ -24,139 +33,215 @@ script:
             const char* am_pm = hour >= 12 ? "PM" : "AM";
             if (hour > 12) hour -= 12;
             if (hour == 0) hour = 12;
-            snprintf(buf, sizeof(buf), " %d:%02d:%02d %s", hour, time.minute, time.second, am_pm);
+            snprintf(buf, sizeof(buf), "%d:%02d %s", hour, time.minute, am_pm);
+            return buf;
+      - lvgl.label.update:
+          id: status_duration
+          text: !lambda |-
+            static char buf[64];
+            auto now = ::time(nullptr);
+            
+            // Get start time (preserve original for display)
+            struct tm start_tm_copy = *localtime(&id(status_change_time));
+            
+            // Create a copy for calculation and drop seconds
+            struct tm start_tm_calc = start_tm_copy;
+            start_tm_calc.tm_sec = 0;
+            time_t start_time_no_seconds = mktime(&start_tm_calc);
+            
+            // Get current time and drop seconds
+            struct tm now_tm_calc = *localtime(&now);
+            now_tm_calc.tm_sec = 0;
+            time_t now_no_seconds = mktime(&now_tm_calc);
+            
+            // Calculate elapsed time in minutes (no seconds)
+            time_t elapsed = now_no_seconds - start_time_no_seconds;
+            if (elapsed < 0) elapsed = 0;
+            
+            int total_minutes = elapsed / 60;
+            int hours = total_minutes / 60;
+            int minutes = total_minutes % 60;
+            
+            // Get the start time for display (from original copy)
+            int status_hour = start_tm_copy.tm_hour;
+            const char* am_pm = status_hour >= 12 ? "PM" : "AM";
+            if (status_hour > 12) status_hour -= 12;
+            if (status_hour == 0) status_hour = 12;
+            
+            // Format duration - hide hours if 0
+            if (hours > 0) {
+              snprintf(buf, sizeof(buf), "since %d:%02d %s (%dh:%02dm)", 
+                       status_hour, start_tm_copy.tm_min, am_pm, hours, minutes);
+            } else {
+              snprintf(buf, sizeof(buf), "since %d:%02d %s (%dm)", 
+                       status_hour, start_tm_copy.tm_min, am_pm, minutes);
+            }
             return buf;
   - id: update_display
+    then:
+      - lambda: |-
+          std::string location = id(mitch_location).state;
+          std::string status = id(mitch_status).state;
+          std::string new_display_status;
+          
+          // Determine the display status based on location and status
+          if (location == "${location_home}") {
+            if (status == "${status_sleeping}") {
+              new_display_status = "${status_sleeping}";
+            } else if (status == "${status_working}") {
+              new_display_status = "${status_working}";
+            } else if (status == "${status_gaming}") {
+              new_display_status = "${status_gaming}";
+            } else if (status == "${status_meeting}") {
+              new_display_status = "${status_meeting}";
+            } else if (status == "${status_busy}") {
+              new_display_status = "${status_busy}";
+            } else {
+              new_display_status = "${status_home}";
+            }
+          } else {
+            new_display_status = "${status_away}";
+          }
+          
+          // Check if status actually changed and update timer
+          if (new_display_status != id(current_display_status)) {
+            id(current_display_status) = new_display_status;
+            id(status_change_time) = ::time(nullptr);
+          }
+      - script.execute: update_ui
+      - lvgl.widget.redraw
+      - script.execute: update_clock
+  
+  - id: update_ui
     then:
       - if:
           condition:
             lambda: |-
-              return std::string(id(mitch_location).state) == "home";
+              return id(current_display_status) == "${status_home}";
           then:
-            - if:
-                condition:
-                  lambda: |-
-                    return std::string(id(mitch_status).state) == "Other";
-                then:
-                  - lvgl.label.update:
-                      id: status_text
-                      text: "Home"
-                  - lvgl.label.update:
-                      id: status_icon
-                      text: "${icon_home}"
-                      text_font: font_icons_150
-                  - lvgl.label.update:
-                      id: status_text
-                      text_color: ${color_home}
-                  - lvgl.label.update:
-                      id: status_icon
-                      text_color: ${color_home}
-            - if:
-                condition:
-                  lambda: |-
-                    return std::string(id(mitch_status).state) == "Sleeping";
-                then:
-                  - lvgl.label.update:
-                      id: status_text
-                      text: "Sleeping"
-                  - lvgl.label.update:
-                      id: status_icon
-                      text: "${icon_sleeping}"
-                      text_font: font_icons_150
-                  - lvgl.label.update:
-                      id: status_text
-                      text_color: ${color_sleeping}
-                  - lvgl.label.update:
-                      id: status_icon
-                      text_color: ${color_sleeping}
-            - if:
-                condition:
-                  lambda: |-
-                    return std::string(id(mitch_status).state) == "Working";
-                then:
-                  - lvgl.label.update:
-                      id: status_text
-                      text: "Working"
-                  - lvgl.label.update:
-                      id: status_icon
-                      text: "${icon_working}"
-                      text_font: font_icons_150
-                  - lvgl.label.update:
-                      id: status_text
-                      text_color: ${color_working}
-                  - lvgl.label.update:
-                      id: status_icon
-                      text_color: ${color_working}
-            - if:
-                condition:
-                  lambda: |-
-                    return std::string(id(mitch_status).state) == "Gaming";
-                then:
-                  - lvgl.label.update:
-                      id: status_text
-                      text: "Gaming"
-                  - lvgl.label.update:
-                      id: status_icon
-                      text: "${icon_gaming}"
-                      text_font: font_icons_150
-                  - lvgl.label.update:
-                      id: status_text
-                      text_color: ${color_gaming}
-                  - lvgl.label.update:
-                      id: status_icon
-                      text_color: ${color_gaming}
-            - if:
-                condition:
-                  lambda: |-
-                    return std::string(id(mitch_status).state) == "Meeting";
-                then:
-                  - lvgl.label.update:
-                      id: status_text
-                      text: "Meeting"
-                  - lvgl.label.update:
-                      id: status_icon
-                      text: "${icon_meeting}"
-                      text_font: font_icons_150
-                  - lvgl.label.update:
-                      id: status_text
-                      text_color: ${color_meeting}
-                  - lvgl.label.update:
-                      id: status_icon
-                      text_color: ${color_meeting}
-            - if:
-                condition:
-                  lambda: |-
-                    return std::string(id(mitch_status).state) == "Busy";
-                then:
-                  - lvgl.label.update:
-                      id: status_text
-                      text: "Busy"
-                  - lvgl.label.update:
-                      id: status_icon
-                      text: "${icon_busy}"
-                      text_font: font_icons_150
-                  - lvgl.label.update:
-                      id: status_text
-                      text_color: ${color_busy}
-                  - lvgl.label.update:
-                      id: status_icon
-                      text_color: ${color_busy}
-          else:
             - lvgl.label.update:
                 id: status_text
-                text: "Away"
+                text: "${status_home}"
+                text_color: ${color_home}
+            - lvgl.label.update:
+                id: status_icon
+                text: "${icon_home}"
+                text_font: font_icons_150
+                text_color: ${color_home}
+      - if:
+          condition:
+            lambda: |-
+              return id(current_display_status) == "${status_sleeping}";
+          then:
+            - lvgl.label.update:
+                id: status_text
+                text: "${status_sleeping}"
+                text_color: ${color_sleeping}
+            - lvgl.label.update:
+                id: status_icon
+                text: "${icon_sleeping}"
+                text_font: font_icons_150
+                text_color: ${color_sleeping}
+      - if:
+          condition:
+            lambda: |-
+              return id(current_display_status) == "${status_working}";
+          then:
+            - lvgl.label.update:
+                id: status_text
+                text: "${status_working}"
+                text_color: ${color_working}
+            - lvgl.label.update:
+                id: status_icon
+                text: "${icon_working}"
+                text_font: font_icons_150
+                text_color: ${color_working}
+      - if:
+          condition:
+            lambda: |-
+              return id(current_display_status) == "${status_gaming}";
+          then:
+            - lvgl.label.update:
+                id: status_text
+                text: "${status_gaming}"
+                text_color: ${color_gaming}
+            - lvgl.label.update:
+                id: status_icon
+                text: "${icon_gaming}"
+                text_font: font_icons_150
+                text_color: ${color_gaming}
+      - if:
+          condition:
+            lambda: |-
+              return id(current_display_status) == "${status_meeting}";
+          then:
+            - lvgl.label.update:
+                id: status_text
+                text: "${status_meeting}"
+                text_color: ${color_meeting}
+            - lvgl.label.update:
+                id: status_icon
+                text: "${icon_meeting}"
+                text_font: font_icons_150
+                text_color: ${color_meeting}
+      - if:
+          condition:
+            lambda: |-
+              return id(current_display_status) == "${status_busy}";
+          then:
+            - lvgl.label.update:
+                id: status_text
+                text: "${status_busy}"
+                text_color: ${color_busy}
+            - lvgl.label.update:
+                id: status_icon
+                text: "${icon_busy}"
+                text_font: font_icons_150
+                text_color: ${color_busy}
+      - if:
+          condition:
+            lambda: |-
+              return id(current_display_status) == "${status_away}";
+          then:
+            - lvgl.label.update:
+                id: status_text
+                text: "${status_away}"
+                text_color: ${color_away}
             - lvgl.label.update:
                 id: status_icon
                 text: "${icon_away}"
                 text_font: font_icons_150
-            - lvgl.label.update:
-                id: status_text
                 text_color: ${color_away}
-            - lvgl.label.update:
-                id: status_icon
-                text_color: ${color_away}
-      - lvgl.widget.redraw
-      - script.execute: update_clock
+      # Show or hide duration label based on current status
+      - if:
+          condition:
+            lambda: |-
+              std::string statuses_str = "${statuses_with_duration}";
+              std::string current = id(current_display_status);
+              
+              // Check if current status is in the list
+              size_t pos = 0;
+              while (pos < statuses_str.length()) {
+                size_t comma = statuses_str.find(',', pos);
+                std::string status = statuses_str.substr(pos, comma - pos);
+                // Trim whitespace
+                status.erase(0, status.find_first_not_of(" \t"));
+                status.erase(status.find_last_not_of(" \t") + 1);
+                
+                if (status == current) {
+                  return true;
+                }
+                
+                if (comma == std::string::npos) break;
+                pos = comma + 1;
+              }
+              return false;
+          then:
+            - lvgl.widget.show:
+                id: status_duration
+          else:
+            - lvgl.widget.hide:
+                id: status_duration
 
 interval:
   - interval: 1s

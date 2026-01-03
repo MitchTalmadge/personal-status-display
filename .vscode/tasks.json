@@ -27,7 +27,8 @@
         "reveal": "always",
         "panel": "dedicated",
         "showReuseMessage": false,
-        "clear": true
+        "clear": true,
+        "close": true
       }
     },
     {
