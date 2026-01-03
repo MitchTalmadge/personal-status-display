@@ -39,3 +39,17 @@ substitutions:
   icon_busy: "\U0000effb"
   icon_away: "\U0000e594"
   icon_clock: "\U0000e8b5"
+
+  # Sleep quality face icons (Material Symbols)
+  icon_face_happy: "\U0000e815"      # sentiment_very_satisfied
+  icon_face_meh: "\U0000e812"        # sentiment_neutral
+  icon_face_drowsy: "\U0000e811"     # sentiment_dissatisfied
+
+  # Sleep quality colors
+  color_sleep_happy: "0x00FF00"      # Green (7+ hours)
+  color_sleep_meh: "0xFFA500"        # Orange (6-7 hours)
+  color_sleep_drowsy: "0xFF0000"     # Red (<6 hours)
+
+  # Sleep quality thresholds (in minutes)
+  sleep_threshold_happy: "420"       # 7 hours = 420 minutes
+  sleep_threshold_meh: "360"         # 6 hours = 360 minutes

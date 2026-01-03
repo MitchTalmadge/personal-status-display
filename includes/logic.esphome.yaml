@@ -6,6 +6,9 @@ globals:
     type: std::string
     restore_value: no
     initial_value: '"${status_sleeping}"'
+  - id: sleep_minutes
+    type: int
+    initial_value: '0'
 
 text_sensor:
   - platform: homeassistant
@@ -70,13 +73,57 @@ script:
             
             // Format duration - hide hours if 0
             if (hours > 0) {
-              snprintf(buf, sizeof(buf), "since %d:%02d %s (%dh:%02dm)", 
+              snprintf(buf, sizeof(buf), "since %d:%02d %s (%dh:%02dm)",
                        status_hour, start_tm_copy.tm_min, am_pm, hours, minutes);
             } else {
-              snprintf(buf, sizeof(buf), "since %d:%02d %s (%dm)", 
+              snprintf(buf, sizeof(buf), "since %d:%02d %s (%dm)",
                        status_hour, start_tm_copy.tm_min, am_pm, minutes);
             }
             return buf;
+      # Update sleep quality face icon based on sleep duration
+      - if:
+          condition:
+            lambda: |-
+              return id(current_display_status) == "${status_sleeping}";
+          then:
+            - lambda: |-
+                auto now = ::time(nullptr);
+                struct tm start_tm_calc = *localtime(&id(status_change_time));
+                start_tm_calc.tm_sec = 0;
+                time_t start_time_no_seconds = mktime(&start_tm_calc);
+
+                struct tm now_tm_calc = *localtime(&now);
+                now_tm_calc.tm_sec = 0;
+                time_t now_no_seconds = mktime(&now_tm_calc);
+
+                time_t elapsed = now_no_seconds - start_time_no_seconds;
+                if (elapsed < 0) elapsed = 0;
+                int total_minutes = elapsed / 60;
+
+                // Store for use in lvgl updates
+                id(sleep_minutes) = total_minutes;
+            - if:
+                condition:
+                  lambda: 'return id(sleep_minutes) >= ${sleep_threshold_happy};'
+                then:
+                  - lvgl.label.update:
+                      id: sleep_quality_face
+                      text: "${icon_face_happy}"
+                      text_color: ${color_sleep_happy}
+                else:
+                  - if:
+                      condition:
+                        lambda: 'return id(sleep_minutes) >= ${sleep_threshold_meh};'
+                      then:
+                        - lvgl.label.update:
+                            id: sleep_quality_face
+                            text: "${icon_face_meh}"
+                            text_color: ${color_sleep_meh}
+                      else:
+                        - lvgl.label.update:
+                            id: sleep_quality_face
+                            text: "${icon_face_drowsy}"
+                            text_color: ${color_sleep_drowsy}
   - id: update_display
     then:
       - lambda: |-
@@ -242,6 +289,17 @@ script:
           else:
             - lvgl.widget.hide:
                 id: status_duration
+      # Show or hide sleep quality face based on sleeping status
+      - if:
+          condition:
+            lambda: |-
+              return id(current_display_status) == "${status_sleeping}";
+          then:
+            - lvgl.widget.show:
+                id: sleep_quality_face
+          else:
+            - lvgl.widget.hide:
+                id: sleep_quality_face
 
 interval:
   - interval: 1s

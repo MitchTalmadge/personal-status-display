@@ -37,3 +37,11 @@ font:
     glyphs: [
       "${icon_clock}"
     ]
+  - file: "gfonts://Material+Symbols+Outlined"
+    id: font_icons_face_40
+    size: 40
+    glyphs: [
+      "${icon_face_happy}",
+      "${icon_face_meh}",
+      "${icon_face_drowsy}"
+    ]

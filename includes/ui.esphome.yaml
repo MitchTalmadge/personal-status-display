@@ -70,6 +70,15 @@ lvgl:
                   text_color: white
                   text_font: font_itim_16
               - label:
+                  id: sleep_quality_face
+                  text: "${icon_face_drowsy}"
+                  width: $display_w
+                  styles: style_sleep_face
+                  text_align: center
+                  text_color: ${color_sleep_drowsy}
+                  text_font: font_icons_face_40
+                  hidden: true
+              - label:
                   id: status_icon
                   text: "${icon_sleeping}"
                   width: $display_w
@@ -89,3 +98,6 @@ lvgl:
       pad_bottom: 10
     - id: style_status_icon
       pad_all: -10
+    - id: style_sleep_face
+      pad_top: 5
+      pad_bottom: 5
